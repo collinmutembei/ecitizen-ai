@@ -9,6 +9,7 @@ export async function getOrCreateUserFromWorkOS(workosUser: any) {
         workosUserId: workosUser.id,
         email: workosUser.email,
         name: workosUser.firstName ? `${workosUser.firstName} ${workosUser.lastName}` : null,
+        // role, deactivated, credits, isSubscribed use defaults from schema
       }
     });
   }

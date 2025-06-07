@@ -1,3 +1,9 @@
+import type { User as DBUser } from '@prisma/client';
+import type { User as PrismaUser } from '@prisma/client';
+
+// Use Prisma's User type directly for type safety
+export type User = PrismaUser;
+
 export interface MCPRequest {
   method: string;
   params?: any;
@@ -17,14 +23,6 @@ export interface ServiceConfig {
   creditsRequired: number;
   requiresSubscription: boolean;
   category: 'ntsa' | 'dci' | 'business' | 'general';
-}
-
-export interface User {
-  id: string;
-  email: string;
-  name?: string;
-  credits: number;
-  isSubscribed: boolean;
 }
 
 export interface PaymentRequest {

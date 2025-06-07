@@ -14,6 +14,8 @@ model User {
   workosUserId  String    @unique
   credits       Int       @default(0)
   isSubscribed  Boolean   @default(false)
+  role          String    @default("user") // 'user' or 'admin'
+  deactivated   Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   
