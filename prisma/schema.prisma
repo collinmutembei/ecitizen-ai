@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  workosUserId  String    @unique
+  credits       Int       @default(0)
+  isSubscribed  Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  payments      Payment[]
+  serviceUsage  ServiceUsage[]
+  
+  @@map("users")
+}
+
+model Payment {
+  id                String    @id @default(cuid())
+  userId            String
+  amount            Decimal   @db.Decimal(10, 2)
+  credits           Int
+  mpesaCheckoutId   String?   @unique
+  mpesaReceiptId    String?   @unique
+  status            PaymentStatus @default(PENDING)
+  phoneNumber       String
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("payments")
+}
+
+model ServiceUsage {
+  id          String    @id @default(cuid())
+  userId      String
+  serviceName String
+  creditsUsed Int
+  requestData Json?
+  response    Json?
+  createdAt   DateTime  @default(now())
+  
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("service_usage")
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
