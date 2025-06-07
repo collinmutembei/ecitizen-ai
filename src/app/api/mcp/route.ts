@@ -1,20 +1,21 @@
 import { getAuthenticatedUser } from '@/lib/auth'
 import { mcpServer } from '@/lib/mcp-server'
-import { prisma } from '@/lib/db'
+import type { User } from '@/lib/types'
 
 export async function POST(req: Request) {
-  // Authenticate
-  const sessionUser = await getAuthenticatedUser(req)
-  if (!sessionUser) {
+  // Use the native Request type for compatibility
+  const authUser = await getAuthenticatedUser(req)
+  if (!authUser) {
     return new Response(JSON.stringify({ error: { code: 401, message: 'Unauthorized' } }), { status: 401, headers: { 'Content-Type': 'application/json' } })
   }
 
-  // Fetch full user from DB
-  const user = await prisma.user.findUnique({
-    where: { id: sessionUser.id },
-  })
-  if (!user) {
-    return new Response(JSON.stringify({ error: { code: 401, message: 'User not found' } }), { status: 401, headers: { 'Content-Type': 'application/json' } })
+  // Cast to only the needed User fields
+  const user: User = {
+    id: authUser.id,
+    email: authUser.email,
+    name: authUser.name ?? undefined,
+    credits: authUser.credits,
+    isSubscribed: authUser.isSubscribed,
   }
 
   let body
